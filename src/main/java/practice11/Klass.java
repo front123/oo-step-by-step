@@ -6,29 +6,29 @@ import java.util.List;
 public class Klass {
     private final int number;
     private Student leader;
-    private final List<Teacher> teachers;
+    private final List<AppendMemberObserver> appendMemberObservers;
+    private final List<AssignLeaderObserver> assignLeaderObservers;
 
     public Klass(int number) {
         this.number = number;
-        teachers = new ArrayList<Teacher>();
+        appendMemberObservers = new ArrayList<>();
+        assignLeaderObservers = new ArrayList<>();
     }
 
     public void appendTeacher(Teacher teacher){
-        if(teachers.contains(teacher)){
+        if(appendMemberObservers.contains(teacher) || assignLeaderObservers.contains(teacher)){
             return;
         }
-        teachers.add(teacher);
-    }
-    public void notifyTeacherTeachThisClassWithMessage(String extraMessage){
-        for (Teacher teacher : teachers) {
-            teacher.outPutMessage(extraMessage);
-        }
+        appendMemberObservers.add(teacher);
+        assignLeaderObservers.add(teacher);
     }
 
     public void appendMember(Student student){
         student.setKlass(this);
         String extraMessage = String.format(" I know %s has joined Class %d.\n", student.getName(), getNumber());
-        notifyTeacherTeachThisClassWithMessage(extraMessage);
+        for (AppendMemberObserver observer : appendMemberObservers) {
+            observer.notifyAppendMemberWithMessage(extraMessage);
+        }
 
     }
 
@@ -44,7 +44,9 @@ public class Klass {
         if (leader.getKlass() == this){
             this.leader = leader;
             String extraMessage = String.format(" I know %s become Leader of Class %d.\n", leader.getName(), getNumber());
-            notifyTeacherTeachThisClassWithMessage(extraMessage);
+            for (AssignLeaderObserver observer : assignLeaderObservers) {
+                observer.notifyAssignLeaderWithMessage(extraMessage);
+            }
         }else {
             System.out.print("It is not one of us.\n");
         }

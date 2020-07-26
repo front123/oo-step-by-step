@@ -3,7 +3,7 @@ package practice11;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Teacher extends Person{
+public class Teacher extends Person implements AppendMemberObserver, AssignLeaderObserver{
     private List<Klass> classes;
     
     public Teacher(int id, String name, int age) {
@@ -31,10 +31,11 @@ public class Teacher extends Person{
     public String introduce() {
         String extraIntroduce = "I teach No Class.";
         if (classes.size()>0){
-            String classNumbers = "";
+            StringBuilder classNumbersBuilder = new StringBuilder();
             for (Klass klass : classes) {
-                classNumbers += klass.getNumber()+", ";
+                classNumbersBuilder.append(klass.getNumber()).append(", ");
             }
+            String classNumbers = classNumbersBuilder.toString();
             extraIntroduce = "I teach Class "+ classNumbers.substring(0, classNumbers.length()-2) +".";
         }
         return super.introduce() + " I am a Teacher. " + extraIntroduce;
@@ -66,5 +67,15 @@ public class Teacher extends Person{
 
     public void setClasses(List<Klass> classes) {
         this.classes = classes;
+    }
+
+    @Override
+    public void notifyAppendMemberWithMessage(String message) {
+        outPutMessage(message);
+    }
+
+    @Override
+    public void notifyAssignLeaderWithMessage(String message) {
+        outPutMessage(message);
     }
 }
